@@ -98,10 +98,9 @@ class Product{
                         . " WHERE"
                         . " p.id = ?";
         
-
-
+               
                 
-        //prepare query statement
+        //prepare query
         $stmt = $this -> conn -> prepare($query);
         
         //bind properties
