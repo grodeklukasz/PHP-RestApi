@@ -101,6 +101,7 @@ class Product{
                
                 
         //prepare query
+        //new comment
         $stmt = $this -> conn -> prepare($query);
         
         //bind properties
