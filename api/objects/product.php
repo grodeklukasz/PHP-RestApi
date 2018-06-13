@@ -101,7 +101,7 @@ class Product{
                
                 
         //prepare query
-        //new comment
+        //new comment for Master Branch
         $stmt = $this -> conn -> prepare($query);
         
         //bind properties
