@@ -125,6 +125,103 @@ class Product{
        
     }
     
+    //update the product
+    public function update(){
+        
+        $query = "UPDATE "
+                . $this -> table_name 
+                . " SET"
+                . " name= :name,"
+                . " price= :price,"
+                . " description= :description,"
+                . " category_id= :category_id"
+                . " WHERE"
+                . " id= :id";
+        
+        //prepare query statement
+        
+        $stmt = $this -> conn -> prepare($query);
+        
+        //sanitize
+        
+        $this -> name = htmlspecialchars(strip_tags($this->name));
+        $this -> description = htmlentities(strip_tags($this->description));
+        $this -> price = htmlspecialchars(strip_tags($this->price));
+        $this -> category_id = htmlspecialchars(strip_tags($this->category_id));
+        $this -> id = htmlspecialchars(strip_tags($this->id));
+        
+        //bind new values
+        
+        $stmt->bindParam(":name",$this->name);
+        $stmt->bindParam(":desription",$this->description);
+        $stmt->bindParam(":price",$this->price);
+        $stmt->bindParam(":category_id",$this->category_id);
+        $stmt->bindParam(":id",$this->id);
+        
+        
+        //execute 
+        
+        if($stmt -> execute()){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+        
+        
+    }
+    
+    public function delete(){
+        
+        //delete query
+        $query = "DELETE FROM " . $this -> table_name . " WHERE id=?";
+        
+        //prepare query
+        $stmt = $this -> conn -> prepare($query);
+        
+        //sanitize
+        
+        $this -> id = htmlspecialchars(strip_tags($this -> id));
+        
+        $stmt -> bindParam(1,$this->id);
+        
+        if($stmt->execute()){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+        
+    }
+    
+    public function search($keywords){
+        
+        $sql = "SELECT c.name as category_name, p.id, p.name, p.description, p.price, p.category_id, p.created"
+                . " FROM "
+                . $this -> table_name . " p"
+                . " LEFT JOIN"
+                . " categories c"
+                . " ON p.category_id=c.id"
+                . " WHERE"
+                . " p.name LIKE ? OR p.description LIKE ? OR c.name LIKE ?"
+                . " ORDER BY"
+                . " p.created DESC";
+        
+        $stmt = $this -> conn -> prepare($sql);
+        
+        //sanitize
+        
+        $keywords = htmlentities(strip_tags($keywords));
+        
+        $keywords = "%{$keywords}%";
+        
+        $stmt -> bindParam(1,$keywords);
+        $stmt -> bindParam(2,$keywords);
+        $stmt -> bindParam(3,$keywords);
+        
+        $stmt->execute();
+        
+        return $stmt;
+    }
+    
     
     
 }
